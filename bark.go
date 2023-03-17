@@ -98,7 +98,7 @@ func handleOpt(o *BarkOpt) (string, error) {
 
 const BASE_URL = "https://api.day.app/"
 
-func Bark(o *BarkOpt) error {
+func Push(o *BarkOpt) error {
 	s, err := handleOpt(o)
 	if err != nil {
 		return err
