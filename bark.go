@@ -12,7 +12,7 @@ import (
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
-type BarkOpt struct {
+type Options struct {
 	// 推送内容 (必填)
 	Msg string `json:"body"`
 	// token (必填)
@@ -39,10 +39,10 @@ type BarkOpt struct {
 	IsArchive int `json:"isArchive,omitempty"`
 
 	// 加密传输
-	Enc *BarkEncOpt `json:"-"`
+	Enc *EncOpt `json:"-"`
 }
 
-type BarkEncOpt struct {
+type EncOpt struct {
 	Mode EncMode
 	Key  string
 	Iv   string
@@ -53,7 +53,7 @@ type barkResp struct {
 	Message string `json:"message"`
 }
 
-func barkEncrypt(e *BarkEncOpt, s []byte) (string, error) {
+func barkEncrypt(e *EncOpt, s []byte) (string, error) {
 	var c crypto.Cryptobin
 	if strings.ToUpper(e.Mode) == "ECB" {
 		c = crypto.FromBytes(s).SetKey(e.Key).Aes().ECB().PKCS7Padding().Encrypt()
@@ -68,7 +68,7 @@ func barkEncrypt(e *BarkEncOpt, s []byte) (string, error) {
 	return c.ToBase64String(), nil
 }
 
-func handleOpt(o *BarkOpt) (string, error) {
+func handleOpt(o *Options) (string, error) {
 	if o.Msg == "" {
 		return "", errors.New("msg is empty")
 	}
@@ -98,7 +98,7 @@ func handleOpt(o *BarkOpt) (string, error) {
 
 const BASE_URL = "https://api.day.app/"
 
-func Push(o *BarkOpt) error {
+func Push(o *Options) error {
 	s, err := handleOpt(o)
 	if err != nil {
 		return err
