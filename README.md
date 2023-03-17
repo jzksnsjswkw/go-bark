@@ -10,7 +10,7 @@ package main
 import "github.com/jzksnsjswkw/go-bark"
 
 func main() {
-	err := bark.Push(&bark.Option{
+	err := bark.Push(&bark.Options{
 		Msg:   "test",
 		Token: "xxxxxxxxxxxxxxxxxxxxxx",
 	})
@@ -18,7 +18,7 @@ func main() {
 		panic(err)
 	}
 
-	err = bark.Push(&bark.Option{
+	err = bark.Push(&bark.Options{
 		Msg:   "test",
 		Token: "xxxxxxxxxxxxxxxxxxxxxx",
 		Enc: &bark.EncOpt{
