@@ -19,6 +19,7 @@ func main() {
 	}
 
 	err = bark.Push(&bark.Options{
+		C:     bark.Client{Domain: "https://aaa.bbbbb.ccc"},
 		Msg:   "test",
 		Token: "xxxxxxxxxxxxxxxxxxxxxx",
 		Enc: &bark.EncOpt{
@@ -30,14 +31,30 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-}
 
+	// Client
+	c := bark.New("https://aaa.bbbbb.ccc")
+	err = c.Push(&bark.Options{
+		Msg:   "test",
+		Token: "xxxxxxxxxxxxxxxxxxxxxx",
+	})
+	if err != nil {
+		panic(err)
+	}
+}
 ```
 
 ## Options
 
 ```Go
+type Client struct {
+	// 服务器URL
+	Domain string
+}
+
 type Options struct {
+	C Client `json:"-"`
+
 	// 推送内容 (必填)
 	Msg string `json:"body"`
 	// token (必填)

@@ -12,7 +12,14 @@ import (
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
+type Client struct {
+	// 服务器URL
+	Domain string
+}
+
 type Options struct {
+	C Client `json:"-"`
+
 	// 推送内容 (必填)
 	Msg string `json:"body"`
 	// token (必填)
@@ -96,14 +103,33 @@ func handleOpt(o *Options) (string, error) {
 	return string(b), nil
 }
 
-const BASE_URL = "https://api.day.app/"
+const DEFAULT_URL = "https://api.day.app"
+
+func New(d string) *Client {
+	return &Client{
+		Domain: d,
+	}
+}
+
+// Domain字段将被忽略
+func (c *Client) Push(o *Options) error {
+
+	o.C.Domain = c.Domain
+	return Push(o)
+}
 
 func Push(o *Options) error {
 	s, err := handleOpt(o)
 	if err != nil {
 		return err
 	}
-	r, err := http.Post(BASE_URL+o.Token, "application/json;charset:utf-8", strings.NewReader(s))
+	var r *http.Response
+	if o.C.Domain == "" {
+		r, err = http.Post(DEFAULT_URL+"/"+o.Token, "application/json;charset:utf-8", strings.NewReader(s))
+	} else {
+		r, err = http.Post(o.C.Domain+"/"+o.Token, "application/json;charset:utf-8", strings.NewReader(s))
+	}
+
 	if err != nil {
 		return err
 	}
