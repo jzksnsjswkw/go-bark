@@ -29,7 +29,7 @@ type Options struct {
 	// 消息分组
 	Group string `json:"group,omitempty"`
 	// 点击推送时，跳转的URL，支持URL Scheme 和 Universal Link
-	Url string `json:"url,omitempty"`
+	URL string `json:"url,omitempty"`
 	// 推送中断级别
 	Level string `json:"level,omitempty"`
 	// 指定复制的内容
