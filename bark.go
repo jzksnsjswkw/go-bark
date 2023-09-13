@@ -1,24 +1,21 @@
 package bark
 
 import (
+	"encoding/json"
 	"errors"
-	"io"
 	"net/http"
 	"strings"
 
 	"github.com/deatil/go-cryptobin/cryptobin/crypto"
-	jsoniter "github.com/json-iterator/go"
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type Client struct {
 	// 服务器URL
-	Domain string
+	ServerURL string
 }
 
 type Options struct {
-	C Client `json:"-"`
+	Client `json:"-"`
 
 	// 推送内容 (必填)
 	Msg string `json:"body"`
@@ -55,6 +52,48 @@ type EncOpt struct {
 	Iv   string
 }
 
+const DefaultDomain = "api.day.app"
+const DefaultURL = "https://" + DefaultDomain
+
+var DefaultClient = New(DefaultURL)
+
+func New(url string) *Client {
+	return &Client{
+		ServerURL: strings.TrimSuffix(url, "/"),
+	}
+}
+
+func Push(o *Options) error {
+	return DefaultClient.Push(o)
+}
+
+func (c *Client) Push(o *Options) error {
+	s, err := handleOpt(o)
+	if err != nil {
+		return err
+	}
+	var r *http.Response
+	if o.ServerURL == "" {
+		r, err = http.Post(c.ServerURL+"/"+o.Token, "application/json;charset:utf-8", strings.NewReader(s))
+	} else {
+		r, err = http.Post(o.ServerURL+"/"+o.Token, "application/json;charset:utf-8", strings.NewReader(s))
+	}
+	if err != nil {
+		return err
+	}
+	defer r.Body.Close()
+
+	b := barkResp{}
+	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
+		return err
+	}
+	if b.Code != 200 {
+		return errors.New(b.Message)
+	}
+
+	return nil
+}
+
 type barkResp struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -62,9 +101,9 @@ type barkResp struct {
 
 func barkEncrypt(e *EncOpt, s []byte) (string, error) {
 	var c crypto.Cryptobin
-	if strings.ToUpper(e.Mode) == "ECB" {
+	if strings.ToUpper(e.Mode) == ECB {
 		c = crypto.FromBytes(s).SetKey(e.Key).Aes().ECB().PKCS7Padding().Encrypt()
-	} else if strings.ToUpper(e.Mode) == "CBC" {
+	} else if strings.ToUpper(e.Mode) == CBC {
 		c = crypto.FromBytes(s).SetKey(e.Key).SetIv(e.Iv).Aes().CBC().PKCS7Padding().Encrypt()
 	} else {
 		return "", errors.New("enc mode must be ECB or CBC")
@@ -101,52 +140,4 @@ func handleOpt(o *Options) (string, error) {
 		}
 	}
 	return string(b), nil
-}
-
-const DEFAULT_URL = "https://api.day.app"
-
-func New(d string) *Client {
-	return &Client{
-		Domain: d,
-	}
-}
-
-// Domain字段将被忽略
-func (c *Client) Push(o *Options) error {
-
-	o.C.Domain = c.Domain
-	return Push(o)
-}
-
-func Push(o *Options) error {
-	s, err := handleOpt(o)
-	if err != nil {
-		return err
-	}
-	var r *http.Response
-	if o.C.Domain == "" {
-		r, err = http.Post(DEFAULT_URL+"/"+o.Token, "application/json;charset:utf-8", strings.NewReader(s))
-	} else {
-		r, err = http.Post(o.C.Domain+"/"+o.Token, "application/json;charset:utf-8", strings.NewReader(s))
-	}
-
-	if err != nil {
-		return err
-	}
-	defer r.Body.Close()
-
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		return err
-	}
-	b := barkResp{}
-	err = json.Unmarshal(body, &b)
-	if err != nil {
-		return err
-	}
-	if b.Code != 200 {
-		return errors.New(b.Message)
-	}
-
-	return nil
 }
