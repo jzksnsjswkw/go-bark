@@ -5,6 +5,8 @@ github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDk
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/deatil/go-cryptobin v1.0.2023 h1:cfxTCRTGAMUK4+jCsGk9meSz8LMSm2hgGnQj8zomfnA=
 github.com/deatil/go-cryptobin v1.0.2023/go.mod h1:yB6uMg/IWzy3PErhpcrJpczmBfBcFmU7WCk/7ttUbUc=
+github.com/deatil/go-cryptobin v1.0.2025 h1:XZ01pKftGGDc7sc4vevzmF5WjTuVL+u6Gs8Q1/48GEg=
+github.com/deatil/go-cryptobin v1.0.2025/go.mod h1:yB6uMg/IWzy3PErhpcrJpczmBfBcFmU7WCk/7ttUbUc=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=

@@ -83,20 +83,18 @@ func (c *Client) Push(o *Options) error {
 	}
 	defer r.Body.Close()
 
-	b := barkResp{}
-	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
+	s2 := struct {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+	}{}
+	if err := json.NewDecoder(r.Body).Decode(&s2); err != nil {
 		return err
 	}
-	if b.Code != 200 {
-		return errors.New(b.Message)
+	if s2.Code != 200 {
+		return errors.New(s2.Message)
 	}
 
 	return nil
-}
-
-type barkResp struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
 }
 
 func barkEncrypt(e *EncOpt, s []byte) (string, error) {

@@ -19,9 +19,9 @@ func main() {
 	}
 
 	err = bark.Push(&bark.Options{
-		C:     bark.Client{Domain: "https://aaa.bbbbb.ccc"},
-		Msg:   "test",
-		Token: "xxxxxxxxxxxxxxxxxxxxxx",
+		Client: bark.Client{ServerURL: "https://aaa.bbbbb.ccc"},
+		Msg:    "test",
+		Token:  "xxxxxxxxxxxxxxxxxxxxxx",
 		Enc: &bark.EncOpt{
 			Mode: bark.CBC,
 			Key:  "1234567890abcdef",
@@ -42,6 +42,7 @@ func main() {
 		panic(err)
 	}
 }
+
 ```
 
 ## Options
